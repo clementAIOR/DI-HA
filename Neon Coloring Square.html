@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Coloring Squares</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      background: #080b14;
+      color: #f5f7ff;
+      font-family: Arial, sans-serif;
+    }
+
+    header, .workspace {
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 4vw, 40px);
+      color: #00f5ff;
+      text-shadow: 0 0 18px #00f5ff66;
+    }
+
+    header p { margin: 0 0 24px; color: #aeb7d0; }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: 190px minmax(0, 1fr);
+      gap: 20px;
+      align-items: start;
+    }
+
+    .sidebar {
+      padding: 16px;
+      background: #121827;
+      border: 1px solid #2b3550;
+      border-radius: 12px;
+    }
+
+    button { font: inherit; cursor: pointer; }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .controls button {
+      padding: 10px 4px;
+      border: 1px solid #536080;
+      border-radius: 6px;
+      background: #1e2941;
+      color: white;
+    }
+
+    .controls button:hover { background: #304365; }
+
+    #palette {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .swatch {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      padding: 0;
+      border: 0;
+      border-radius: 4px;
+      background: var(--color);
+      box-shadow: 0 0 10px var(--color);
+    }
+
+    button[aria-pressed="true"], button:focus-visible {
+      outline: 2px solid white;
+      outline-offset: 3px;
+    }
+
+    #selection {
+      margin: 18px 0 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #c7d0e8;
+    }
+
+    #board {
+      display: grid;
+      /* JavaScript sets the number of columns. */
+      grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+      gap: 1px;
+      width: 100%;
+      align-content: start;
+      align-items: start;
+      background: #293149;
+      border: 1px solid #3b4664;
+      box-shadow: 0 0 24px #00f5ff12;
+      touch-action: none;
+      user-select: none;
+      cursor: crosshair;
+    }
+
+    .cell {
+      width: 100%;
+      min-width: 0;
+      aspect-ratio: 1 / 1; /* Height always follows width. */
+      background: #0e1220;
+    }
+
+    @media (max-width: 700px) {
+      body { padding: 12px; }
+      .workspace { grid-template-columns: minmax(0, 1fr); }
+      #palette { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Neon Coloring Squares</h1>
+    <p>Pick a color, then click and drag to paint. You can also use touch.</p>
+  </header>
+
+  <main class="workspace">
+    <aside class="sidebar" aria-label="Drawing tools">
+      <div class="controls">
+        <button id="clear" type="button">Clear</button>
+        <button id="eraser" type="button" aria-pressed="false">Eraser</button>
+      </div>
+      <div id="palette" role="group" aria-label="Neon colors"></div>
+      <p id="selection" role="status"></p>
+    </aside>
+
+    <div id="board" role="group" aria-label="Drawing grid"></div>
+  </main>
+
+  <!-- Keep the script here, just before the closing body tag. -->
+  <script>
+    const COLUMNS = 60;
+    const ROWS = 24;
+    const EMPTY_COLOR = "#0e1220";
+
+    const colors = [
+      ["Neon red", "#ff1744"],
+      ["Hot pink", "#ff1493"],
+      ["Neon magenta", "#ff00ff"],
+      ["Neon orange", "#ff5f1f"],
+      ["Electric amber", "#ffb000"],
+      ["Neon yellow", "#ffff00"],
+      ["Electric lime", "#ccff00"],
+      ["Neon green", "#39ff14"],
+      ["Spring green", "#00ff66"],
+      ["Neon mint", "#00ffb3"],
+      ["Electric turquoise", "#00ffd5"],
+      ["Neon cyan", "#00f5ff"],
+      ["Electric sky", "#00bfff"],
+      ["Electric blue", "#2979ff"],
+      ["Neon indigo", "#635bff"],
+      ["Neon violet", "#9d00ff"],
+      ["Electric purple", "#bf00ff"],
+      ["Neon orchid", "#e040ff"],
+      ["Laser pink", "#ff6ec7"],
+      ["Ice blue", "#a5f3ff"],
+      ["White", "#ffffff"]
+    ];
+
+    const board = document.querySelector("#board");
+    const palette = document.querySelector("#palette");
+    const eraser = document.querySelector("#eraser");
+    const selection = document.querySelector("#selection");
+    const cells = [];
+
+    let selectedColor = colors[0][1];
+    let activePointer = null;
+    let previousCell = null;
+
+    // 1. Create the drawing grid once. Resizing never deletes the drawing.
+    board.style.setProperty("--columns", COLUMNS);
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < COLUMNS * ROWS; i++) {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.index = i;
+      fragment.appendChild(cell);
+      cells.push(cell);
+    }
+
+    board.appendChild(fragment);
+
+    // 2. Create the color buttons.
+    function selectColor(color, name) {
+      selectedColor = color;
+      selection.textContent = "Selected: " + name;
+
+      for (const button of palette.children) {
+        button.setAttribute("aria-pressed", button.dataset.color === color);
+      }
+
+      eraser.setAttribute("aria-pressed", color === EMPTY_COLOR);
+    }
+
+    for (const [name, color] of colors) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "swatch";
+      button.dataset.color = color;
+      button.style.setProperty("--color", color);
+      button.title = name;
+      button.setAttribute("aria-label", name);
+      button.addEventListener("click", () => selectColor(color, name));
+      palette.appendChild(button);
+    }
+
+    selectColor(colors[0][1], colors[0][0]);
+
+    // 3. Paint, filling gaps between pointer events during fast drags.
+    function paint(event) {
+      const target = document.elementFromPoint(event.clientX, event.clientY);
+
+      if (!target || !target.classList.contains("cell") || target.parentElement !== board) {
+        if (!target || !board.contains(target)) previousCell = null;
+        return;
+      }
+
+      const index = Number(target.dataset.index);
+      const current = { x: index % COLUMNS, y: Math.floor(index / COLUMNS) };
+      const start = previousCell || current;
+      const steps = Math.max(Math.abs(current.x - start.x), Math.abs(current.y - start.y));
+
+      for (let step = 0; step <= steps; step++) {
+        const progress = steps === 0 ? 0 : step / steps;
+        const x = Math.round(start.x + (current.x - start.x) * progress);
+        const y = Math.round(start.y + (current.y - start.y) * progress);
+        cells[y * COLUMNS + x].style.backgroundColor = selectedColor;
+      }
+
+      previousCell = current;
+    }
+
+    function stopDrawing() {
+      if (activePointer !== null && board.hasPointerCapture(activePointer)) {
+        board.releasePointerCapture(activePointer);
+      }
+      activePointer = null;
+      previousCell = null;
+    }
+
+    board.addEventListener("pointerdown", (event) => {
+      if (!event.isPrimary || event.button !== 0 || activePointer !== null) return;
+      event.preventDefault();
+      activePointer = event.pointerId;
+      previousCell = null;
+      board.setPointerCapture(event.pointerId);
+      paint(event);
+    });
+
+    board.addEventListener("pointermove", (event) => {
+      if (event.pointerId !== activePointer) return;
+      if (event.buttons === 0) { stopDrawing(); return; }
+      paint(event);
+    });
+
+    window.addEventListener("pointerup", (event) => {
+      if (event.pointerId !== activePointer) return;
+      paint(event);
+      stopDrawing();
+    });
+
+    window.addEventListener("pointercancel", (event) => {
+      if (event.pointerId === activePointer) stopDrawing();
+    });
+
+    board.addEventListener("lostpointercapture", stopDrawing);
+    window.addEventListener("blur", stopDrawing);
+
+    // 4. Erase individual squares or clear the whole grid.
+    eraser.addEventListener("click", () => selectColor(EMPTY_COLOR, "Eraser"));
+
+    document.querySelector("#clear").addEventListener("click", () => {
+      stopDrawing();
+      for (const cell of cells) cell.style.backgroundColor = "";
+    });
+  </script>
+</body>
+</html>
