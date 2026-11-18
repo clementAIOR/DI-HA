@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript Daily Challenge - Not Bad to Good</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #f8f6f1; color: #172b31; }
+    main { max-width: 660px; margin: 70px auto; background: white; padding: 32px; border: 1px solid #eee7da; border-radius: 14px; }
+    label { display: block; margin: 24px 0 8px; font-weight: 600; }
+    textarea { font: inherit; box-sizing: border-box; width: 100%; padding: 12px; border: 1px solid #b4b4b4; border-radius: 7px; resize: vertical; }
+    button { background: #1f4b55; color: white; border: none; padding: 11px 20px; border-radius: 7px; margin-top: 12px; cursor: pointer; font: inherit; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #f2f3ef; padding: 18px; border-radius: 7px; min-height: 22px; }
+    p { line-height: 1.5; }
+  </style>
+  <script src="not_bad_challenge.js" defer></script>
+</head>
+<body>
+  <main>
+    <h1>Not Bad → Good</h1>
+    <p>Enter a sentence containing <strong>not</strong> followed by <strong>bad</strong>, then click Run.</p>
+    <label for="sentence-input">Your sentence</label>
+    <textarea id="sentence-input" rows="3">This dinner is not that bad ! You cook well</textarea>
+    <button id="run-button" type="button">Run challenge</button>
+    <h2>Result</h2>
+    <pre id="result">Loading...</pre>
+    <p>To see the <code>console.log()</code> output, open Chrome Developer Tools with <strong>⌘ + Option + J</strong>.</p>
+  </main>
+</body>
+</html>
