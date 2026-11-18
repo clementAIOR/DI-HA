@@ -11,9 +11,14 @@ people[people.indexOf("James")] = "Jason"; // Replace James.
 people.push("Clement"); // Add your name.
 console.log("Mary's index:", people.indexOf("Mary")); // 0
 
-const peopleCopy = people.slice(1, 3); // Neither Mary nor Clement.
+// The array is now ["Mary", "Devon", "Jason", "Clement"].
+// slice(1, 3) includes index 1 ("Devon") but excludes index 3 ("Clement").
+// It therefore copies "Devon" and "Jason", leaving out Mary and Clement.
+const peopleCopy = people.slice(1, 3);
 console.log("Copied array:", peopleCopy); // ["Devon", "Jason"]
-console.log("Foo's index:", people.indexOf("Foo")); // -1 because Foo isn't in the array.
+const fooIndex = people.indexOf("Foo");
+console.log("Foo's index:", fooIndex); // -1
+console.log("Why -1? indexOf returns -1 when the searched element is not found in the array.");
 
 const last = people[people.length - 1];
 console.log("Last person:", last); // Clement
@@ -48,6 +53,7 @@ for (let i = 0; i < colors.length; i++) {
 // EXERCISE 3: Repeat the question
 // prompt() returns a string or null. Press the button in index.html.
 function repeatQuestion() {
+  console.log("Exercise 3: Open the browser Console to see results from the other exercises.");
   let number;
   do {
     const answer = prompt("Please enter a number of at least 10:");
@@ -116,8 +122,12 @@ const details = {
   is: "Rudolf",
   the: "reindeer",
 };
+// Object.keys() gives us an array of the object's keys in insertion order.
+// This traditional for loop uses an index, as required by the exercise.
+const detailKeys = Object.keys(details);
 let sentence = "";
-for (const key in details) {
+for (let i = 0; i < detailKeys.length; i++) {
+  const key = detailKeys[i];
   sentence += key + " " + details[key] + " ";
 }
 console.log(sentence.trim()); // my name is Rudolf the reindeer
