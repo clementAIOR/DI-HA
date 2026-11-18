@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Star Pattern - Daily Challenge</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f6f4ef; color: #222; margin: 0; padding: 32px 16px; }
+    main { max-width: 680px; margin: auto; }
+    h1 { margin-bottom: 6px; }
+    p { line-height: 1.6; color: #555; }
+    section { background: white; border: 1px solid #ddd; border-radius: 12px; padding: 22px; margin: 20px 0; }
+    pre { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 20px; line-height: 1.6; background: #f0f2f4; padding: 22px; border-radius: 8px; white-space: pre; }
+    .note { font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Star Pattern - Daily Challenge</h1>
+    <p>This page is self-contained: open it directly in Chrome or Safari to see both solutions.</p>
+    <section>
+      <h2>Version 1 - One loop</h2>
+      <pre id="one-loop">Loading...</pre>
+    </section>
+    <section>
+      <h2>Version 2 - Nested loops</h2>
+      <pre id="nested-loops">Loading...</pre>
+    </section>
+    <p class="note">To test the separate JavaScript file, use <code>node star_pattern.js</code> in Terminal or paste its contents into the browser Console.</p>
+  </main>
+  <script>
+    // Version 1: one loop
+    const firstPattern = [];
+    let line = "";
+    for (let i = 1; i <= 6; i++) {
+      line += "* ";
+      firstPattern.push(line.trim());
+    }
+
+    // Version 2: nested loops
+    const secondPattern = [];
+    for (let i = 1; i <= 6; i++) {
+      let row = "";
+      for (let j = 1; j <= i; j++) {
+        row += "* ";
+      }
+      secondPattern.push(row.trim());
+    }
+
+    document.getElementById("one-loop").textContent = firstPattern.join("\n");
+    document.getElementById("nested-loops").textContent = secondPattern.join("\n");
+  </script>
+</body>
+</html>
