@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JavaScript Practice Lab — Exercises 1–7</title>
+  <style>
+    :root { color-scheme: light; --ink:#202840; --muted:#657189; --paper:#f6f7fb; --white:#fff; --line:#dfe3ed; --accent:#e67845; --violet:#41477b; --green:#1d7658; --red:#c03d45; --shadow:0 8px 28px rgba(25,39,71,.065); }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.55 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .shell { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .hero { padding: 56px 0 34px; background: linear-gradient(118deg,#202944,#393966); color: white; }
+    .eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: 750; color: #ffc39c; }
+    h1 { font-size: clamp(28px,4.5vw,50px); line-height: 1.12; letter-spacing: -.9px; margin: 14px 0 12px; }
+    .hero p { color: #e0e4f1; max-width: 680px; margin: 0; }
+    .top-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+    .top-links a { padding: 8px 12px; color: #fff; font-size: 12px; text-decoration: none; border: 1px solid #ffffff46; border-radius: 999px; transition: background .2s; }
+    .top-links a:hover { background: #ffffff28; }
+    main { display: grid; gap: 22px; padding-top: 36px !important; padding-bottom: 70px !important; }
+    .panel { scroll-margin-top: 18px; background: var(--white); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+    .panel-heading { padding: 24px 28px 16px; border-bottom: 1px solid var(--line); }
+    .panel-heading .number { display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: .4px; background: #fcebe3; color: #a4512a; padding: 4px 9px; border-radius: 6px; }
+    h2 { margin: 10px 0 4px; font-size: 24px; letter-spacing: -.3px; }
+    .description { color: var(--muted); margin: 0; font-size: 14px; }
+    .panel-body { padding: 24px 28px 28px; }
+    .control-row { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; }
+    .field { display: grid; gap: 5px; min-width: 112px; }
+    .field.wide { min-width: min(100%,270px); }
+    label { font-size: 12px; font-weight: 650; color:#34405b; }
+    input { background: #fff; border: 1px solid #cbd3e2; border-radius: 8px; padding: 10px 12px; color:var(--ink); font: inherit; width: 100%; }
+    input:focus { outline: 2px solid #9ca5e8; outline-offset: 1px; }
+    button { background: var(--violet); color:#fff; font: 650 13px/1.3 inherit; border: 0; border-radius: 8px; cursor: pointer; padding: 12px 15px; white-space: nowrap; transition: transform .1s, opacity .2s; }
+    button:hover { opacity:.89; }
+    button:active { transform:translateY(1px); }
+    button.secondary { color: var(--violet); background: #eef0f9; }
+    button:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
+    .output { background:#171f36; color: #eaf0ff; padding: 16px 18px; border-radius: 10px; white-space: pre-wrap; word-break: break-word; overflow-wrap:anywhere; font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; margin: 14px 0 0; min-height: 48px; }
+    .hint { font-size: 12px; color:var(--muted); margin:12px 0 0; }
+    .stock-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(115px,1fr)); gap: 8px; margin-top: 14px; }
+    .stock-tile { border: 1px solid var(--line); border-radius: 9px; padding: 10px; }
+    .stock-tile strong { display:block; font-size: 13px; text-transform: capitalize; }
+    .stock-tile small { font-size:11px; color:var(--muted); }
+    .coin-grid { display:grid; grid-template-columns:repeat(4,minmax(100px,1fr)); gap:12px; margin-top:14px; }
+    .preview { background:#fafbff; padding:18px; border:1px dashed #c9cede; border-radius:10px; margin-top: 16px; }
+    #usersDemo #container { margin-bottom: 12px; border-radius: 6px; font-weight: 600; }
+    #usersDemo .user-lists { display: flex; flex-wrap: wrap; gap: 20px; }
+    #usersDemo ul { min-width: 150px; margin:6px 0; padding-left: 26px; }
+    #usersDemo li { padding: 3px 7px; }
+    #navBar ul, #socialNetworkNavigation ul { display: flex; flex-wrap: wrap; list-style: none; gap: 8px; padding: 0; margin: 0; }
+    #navBar li, #socialNetworkNavigation li { display:inline-block; background: #e8ebfa; color: #343963; border-radius: 999px; padding: 7px 12px; font-size: 13px; font-weight:650; }
+    #navBar a, #socialNetworkNavigation a { color:inherit; text-decoration:none; }
+    .listBooks { display: flex; flex-wrap: wrap; gap: 14px; margin-top:16px; }
+    .book { border: 1px solid var(--line); border-radius: 10px; padding:16px; flex:1 1 220px; max-width: 320px; background:#fff; }
+    .book p { margin:0 0 12px; font-size: 13px; }
+    .book img { display:block; width:100px; height:145px; object-fit: cover; background:#e7eaf2; border-radius:4px; }
+    .book small { display:block; color:var(--muted); margin-top:8px; }
+    .callout { margin-top: 14px; font-size: 12px; background:#fff5eb; color:#745339; padding: 10px 12px; border-radius:8px; }
+    .bottom { border-top:1px solid var(--line); color:var(--muted); padding:22px 0 35px; font-size:12px; }
+    @media(max-width:620px) { .shell{padding:0 16px;} .hero{padding-top:34px;} .panel-heading,.panel-body{padding-left:17px;padding-right:17px;} .coin-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .field.wide{flex:1 1 100%;} .control-row button{flex:1 1 auto;} }
+  </style>
+</head>
+<body>
+<header class="hero">
+  <div class="shell">
+    <div class="eyebrow">Developers Institute · JavaScript practice</div>
+    <h1>7 exercises.<br>One working page.</h1>
+    <p>Functions, conditions, loops, objects, arrays and DOM manipulation. Try each exercise below, and inspect the browser console to see the JavaScript output.</p>
+    <nav class="top-links" aria-label="Jump to exercise">
+      <a href="#exercise1">01 Divisible numbers</a>
+      <a href="#exercise2">02 Shopping list</a>
+      <a href="#exercise3">03 Wallet</a>
+      <a href="#exercise4">04 Vacation</a>
+      <a href="#exercise5">05 Users</a>
+      <a href="#exercise6">06 Navbar</a>
+      <a href="#exercise7">07 Books</a>
+    </nav>
+  </div>
+</header>
+
+<main class="shell">
+  <!-- EXERCISE 1 -->
+  <section class="panel" id="exercise1">
+    <div class="panel-heading"><span class="number">EXERCISE 01</span><h2>Numbers divisible by 23</h2><p class="description">Find all numbers from 0 to 500 that are divisible by your chosen divisor, then calculate their sum.</p></div>
+    <div class="panel-body">
+      <div class="control-row">
+        <div class="field"><label for="divisorInput">Divisor (bonus)</label><input id="divisorInput" type="number" min="1" step="1" value="23" /></div>
+        <button id="runDivisible" type="button">Calculate</button>
+        <button class="secondary" id="defaultDivisible" type="button">Use 23</button>
+      </div>
+      <pre class="output" id="divisibleOutput" aria-live="polite">Click Calculate to see the numbers.</pre>
+      <p class="hint">Try 23, 3, or 45. The original function also works with no parameter: <code>displayNumbersDivisible()</code>.</p>
+    </div>
+  </section>
+
+  <!-- EXERCISE 2 -->
+  <section class="panel" id="exercise2">
+    <div class="panel-heading"><span class="number">EXERCISE 02</span><h2>Shopping list</h2><p class="description">Your cart: 1 banana, 1 orange, 1 apple. Items with zero stock cannot be purchased.</p></div>
+    <div class="panel-body">
+      <div class="control-row"><button id="runBill" type="button">Run myBill()</button><button id="resetStock" class="secondary" type="button">Reset stock</button></div>
+      <div class="stock-grid" id="stockGrid" aria-label="Current stock"></div>
+      <pre class="output" id="billOutput" aria-live="polite">Click Run myBill() to purchase the available items.</pre>
+      <p class="hint">Bonus included: buying an available item reduces its stock by 1.</p>
+    </div>
+  </section>
+
+  <!-- EXERCISE 3 -->
+  <section class="panel" id="exercise3">
+    <div class="panel-heading"><span class="number">EXERCISE 03</span><h2>What's in my wallet?</h2><p class="description">Count your coins and check whether you can afford the item.</p></div>
+    <div class="panel-body">
+      <div class="control-row"><div class="field"><label for="itemPrice">Item price ($)</label><input id="itemPrice" type="number" min="0" step="0.01" value="4.25" /></div></div>
+      <div class="coin-grid">
+        <div class="field"><label for="quarters">Quarters (25¢)</label><input id="quarters" type="number" min="0" step="1" value="25" /></div>
+        <div class="field"><label for="dimes">Dimes (10¢)</label><input id="dimes" type="number" min="0" step="1" value="20" /></div>
+        <div class="field"><label for="nickels">Nickels (5¢)</label><input id="nickels" type="number" min="0" step="1" value="5" /></div>
+        <div class="field"><label for="pennies">Pennies (1¢)</label><input id="pennies" type="number" min="0" step="1" value="0" /></div>
+      </div>
+      <div class="control-row" style="margin-top:14px"><button id="runWallet" type="button">Check my wallet</button><button class="secondary" type="button" data-wallet-example="0">Example 1</button><button class="secondary" type="button" data-wallet-example="1">Example 2</button><button class="secondary" type="button" data-wallet-example="2">Example 3</button></div>
+      <pre class="output" id="walletOutput" aria-live="polite">Click Check my wallet to get true or false.</pre>
+    </div>
+  </section>
+
+  <!-- EXERCISE 4 -->
+  <section class="panel" id="exercise4">
+    <div class="panel-heading"><span class="number">EXERCISE 04</span><h2>Vacation costs</h2><p class="description">Hotel $140/night, car $40/day (5% off for more than 10 days), plus plane tickets.</p></div>
+    <div class="panel-body">
+      <div class="control-row"><button id="runVacation" type="button">Calculate with prompts</button><button class="secondary" id="runVacationBonus" type="button">Bonus version</button></div>
+      <pre class="output" id="vacationOutput" aria-live="polite">Click a button to answer the 3 questions in browser popups.</pre>
+      <p class="hint">Original: each cost function asks a question. Bonus: only <code>totalVacationCostBonus()</code> asks questions; the three other functions take parameters.</p>
+    </div>
+  </section>
+
+  <!-- EXERCISE 5 -->
+  <section class="panel" id="exercise5">
+    <div class="panel-heading"><span class="number">EXERCISE 05</span><h2>Users — DOM selectors</h2><p class="description">Modify names, remove Sarah, hide Dan, add classes and style elements.</p></div>
+    <div class="panel-body">
+      <div class="control-row"><div class="field wide"><label for="myName">Your name</label><input id="myName" type="text" value="Clément" /></div><button id="applyUsers" type="button">Apply DOM changes</button><button class="secondary" id="resetUsers" type="button">Reset users</button></div>
+      <div class="preview" id="usersDemo">
+        <div id="container">Users:</div>
+        <div class="user-lists">
+          <ul class="list"><li>John</li><li>Pete</li></ul>
+          <ul class="list"><li>David</li><li>Sarah</li><li>Dan</li></ul>
+        </div>
+      </div>
+      <pre class="output" id="usersOutput" aria-live="polite">Click Apply DOM changes to update the lists.</pre>
+      <p class="hint">Note: the assignment contains a typo: Dan is the final item of the second <code>&lt;ul&gt;</code>, not the first. The bonus greeting is displayed as an alert.</p>
+    </div>
+  </section>
+
+  <!-- EXERCISE 6 -->
+  <section class="panel" id="exercise6">
+    <div class="panel-heading"><span class="number">EXERCISE 06</span><h2>Change the navbar</h2><p class="description">Rename the element ID, create a Logout item, and read the first/last child.</p></div>
+    <div class="panel-body">
+      <div class="control-row"><button id="applyNavbar" type="button">Modify navbar</button><button id="resetNavbar" class="secondary" type="button">Reset navbar</button></div>
+      <div class="preview">
+        <div id="navBar">
+          <ul>
+            <li><a href="#exercise6">Profile</a></li>
+            <li><a href="#exercise6">Home</a></li>
+            <li><a href="#exercise6">My Friends</a></li>
+            <li><a href="#exercise6">Messenger</a></li>
+            <li><a href="#exercise6">My Pics</a></li>
+          </ul>
+        </div>
+      </div>
+      <pre class="output" id="navbarOutput" aria-live="polite">Click Modify navbar to add Logout.</pre>
+    </div>
+  </section>
+
+  <!-- EXERCISE 7 -->
+  <section class="panel" id="exercise7">
+    <div class="panel-heading"><span class="number">EXERCISE 07</span><h2>My book list</h2><p class="description">Render books from an array of objects using DOM methods. Previously read books are red.</p></div>
+    <div class="panel-body">
+      <div class="control-row"><button id="renderBooks" type="button">Render books again</button></div>
+      <section class="listBooks" aria-label="Books"></section>
+      <p class="hint">Images are set to 100px wide. Covers load from Open Library, so an internet connection is needed for the images.</p>
+    </div>
+  </section>
+
+  <div class="callout">Tip: Open this file in a browser (Chrome, Safari or Firefox). To view <code>console.log()</code>, open Developer Tools → Console. Do not run this HTML file with <code>node</code>.</div>
+</main>
+<footer class="bottom"><div class="shell">JavaScript Practice Lab · All 7 exercises live in this single HTML file. CSS and JavaScript are embedded below.</div></footer>
+
+<script>
+  "use strict";
+
+  // =============================================================
+  // EXERCISE 1 — Divisible numbers (bonus divisor included)
+  // =============================================================
+  function displayNumbersDivisible(divisor = 23) {
+    if (!Number.isInteger(divisor) || divisor <= 0) return null;
+    let sum = 0;
+    let numbers = [];
+    for (let number = 0; number <= 500; number++) {
+      if (number % divisor === 0) {
+        numbers.push(number);
+        sum += number;
+      }
+    }
+    console.log(numbers.join(" "));
+    console.log("Sum : " + sum);
+    return { numbers, sum };
+  }
+
+  function updateDivisible(divisor) {
+    const result = displayNumbersDivisible(divisor);
+    document.getElementById("divisibleOutput").textContent = result
+      ? result.numbers.join(" ") + "\nSum : " + result.sum
+      : "Please enter a positive whole number.";
+  }
+  document.getElementById("runDivisible").addEventListener("click", () => {
+    updateDivisible(Number(document.getElementById("divisorInput").value));
+  });
+  document.getElementById("defaultDivisible").addEventListener("click", () => {
+    document.getElementById("divisorInput").value = "23";
+    updateDivisible(23);
+  });
+  updateDivisible(23);
+
+  // =============================================================
+  // EXERCISE 2 — Shopping list (bonus stock reduction included)
+  // =============================================================
+  const originalStock = { banana: 6, apple: 0, pear: 12, orange: 32, blueberry: 1 };
+  const stock = { ...originalStock };
+  const prices = { banana: 4, apple: 2, pear: 1, orange: 1.5, blueberry: 10 };
+  const shoppingList = ["banana", "orange", "apple"];
+
+  function myBill() {
+    let total = 0;
+    for (let item of shoppingList) {
+      if (item in stock && stock[item] > 0) {
+        total += prices[item];
+        stock[item] -= 1; // Bonus: buy one, reduce stock by one
+      }
+    }
+    return total;
+  }
+  function showStock() {
+    const grid = document.getElementById("stockGrid");
+    grid.replaceChildren();
+    for (const item in stock) {
+      const tile = document.createElement("div");
+      tile.className = "stock-tile";
+      const name = document.createElement("strong");
+      name.textContent = item;
+      const details = document.createElement("small");
+      details.textContent = `Stock: ${stock[item]} · $${prices[item].toFixed(2)}`;
+      tile.append(name, details);
+      grid.appendChild(tile);
+    }
+  }
+  document.getElementById("runBill").addEventListener("click", () => {
+    const bill = myBill();
+    document.getElementById("billOutput").textContent = `Cart: ${shoppingList.join(", ")}\nTotal bill: $${bill.toFixed(2)}\nApple: out of stock (not charged)`;
+    console.log("Total bill: $" + bill.toFixed(2));
+    console.log("Stock after shopping:", stock);
+    showStock();
+  });
+  document.getElementById("resetStock").addEventListener("click", () => {
+    for (const item in originalStock) stock[item] = originalStock[item];
+    showStock();
+    document.getElementById("billOutput").textContent = "Stock reset. Click Run myBill() to shop again.";
+  });
+  showStock();
+
+  // =============================================================
+  // EXERCISE 3 — Wallet: integer cents prevent rounding errors
+  // =============================================================
+  function changeEnough(itemPrice, amountOfChange) {
+    const quarters = amountOfChange[0] * 25;
+    const dimes = amountOfChange[1] * 10;
+    const nickels = amountOfChange[2] * 5;
+    const pennies = amountOfChange[3];
+    const totalCents = quarters + dimes + nickels + pennies;
+    return totalCents >= Math.round(itemPrice * 100);
+  }
+  function checkWallet() {
+    const price = Number(document.getElementById("itemPrice").value);
+    const coins = ["quarters", "dimes", "nickels", "pennies"].map(id => Number(document.getElementById(id).value));
+    const output = document.getElementById("walletOutput");
+    if (!Number.isFinite(price) || price < 0 || coins.some(n => !Number.isInteger(n) || n < 0)) {
+      output.textContent = "Enter a valid price and non-negative whole-number coin counts.";
+      return;
+    }
+    const totalCents = coins[0] * 25 + coins[1] * 10 + coins[2] * 5 + coins[3];
+    const answer = changeEnough(price, coins);
+    output.textContent = `Coins: [${coins.join(", ")}]\nWallet: $${(totalCents / 100).toFixed(2)}\nItem: $${price.toFixed(2)}\nCan afford? ${answer}`;
+    console.log(answer);
+  }
+  const walletExamples = [
+    [4.25, [25, 20, 5, 0]],
+    [14.11, [2, 100, 0, 0]],
+    [0.75, [0, 0, 20, 5]]
+  ];
+  document.querySelectorAll("[data-wallet-example]").forEach(button => {
+    button.addEventListener("click", () => {
+      const [price, coins] = walletExamples[Number(button.dataset.walletExample)];
+      document.getElementById("itemPrice").value = price;
+      ["quarters", "dimes", "nickels", "pennies"].forEach((id, i) => {
+        document.getElementById(id).value = coins[i];
+      });
+      checkWallet();
+    });
+  });
+  document.getElementById("runWallet").addEventListener("click", checkWallet);
+  checkWallet();
+
+  // =============================================================
+  // EXERCISE 4 — Original: prompts INSIDE the three cost functions
+  // =============================================================
+  function askPositiveWholeNumber(question) {
+    while (true) {
+      const answer = prompt(question);
+      if (answer === null) return null;
+      const number = Number(answer);
+      if (answer.trim() !== "" && Number.isInteger(number) && number > 0) return number;
+      alert("Please enter a positive whole number.");
+    }
+  }
+  function askDestination() {
+    while (true) {
+      const answer = prompt("Where are you travelling? (London / Paris / Other)");
+      if (answer === null) return null;
+      const destination = answer.trim();
+      if (/[a-zA-Z]/.test(destination)) return destination;
+      alert("Please enter a valid destination.");
+    }
+  }
+  function hotelCost() {
+    const nights = askPositiveWholeNumber("How many hotel nights?");
+    return nights === null ? null : nights * 140;
+  }
+  function planeRideCost() {
+    const destination = askDestination();
+    if (destination === null) return null;
+    if (destination.toLowerCase() === "london") return 183;
+    if (destination.toLowerCase() === "paris") return 220;
+    return 300;
+  }
+  function rentalCarCost() {
+    const days = askPositiveWholeNumber("How many car rental days?");
+    if (days === null) return null;
+    let cost = days * 40;
+    if (days > 10) cost *= 0.95;
+    return cost;
+  }
+  function showVacation(hotel, plane, car) {
+    const total = hotel + plane + car;
+    const message = `The car cost: $${car.toFixed(2)}\nThe hotel cost: $${hotel.toFixed(2)}\nThe plane tickets cost: $${plane.toFixed(2)}\nTotal vacation cost: $${total.toFixed(2)}`;
+    document.getElementById("vacationOutput").textContent = message;
+    console.log(message);
+    return total;
+  }
+  function totalVacationCost() {
+    const hotel = hotelCost();
+    if (hotel === null) return null;
+    const plane = planeRideCost();
+    if (plane === null) return null;
+    const car = rentalCarCost();
+    if (car === null) return null;
+    return showVacation(hotel, plane, car);
+  }
+
+  // BONUS: prompts are ONLY in totalVacationCostBonus(), not the cost functions.
+  function hotelCostBonus(nights) { return nights * 140; }
+  function planeRideCostBonus(destination) {
+    if (destination.toLowerCase() === "london") return 183;
+    if (destination.toLowerCase() === "paris") return 220;
+    return 300;
+  }
+  function rentalCarCostBonus(days) { return days * 40 * (days > 10 ? 0.95 : 1); }
+  function totalVacationCostBonus() {
+    // Bonus: only THIS function contains prompt() calls.
+    let nights;
+    while (true) {
+      const answer = prompt("How many hotel nights?");
+      if (answer === null) return null;
+      nights = Number(answer);
+      if (answer.trim() !== "" && Number.isInteger(nights) && nights > 0) break;
+      alert("Please enter a positive whole number of nights.");
+    }
+
+    let destination;
+    while (true) {
+      const answer = prompt("Where are you travelling? (London / Paris / Other)");
+      if (answer === null) return null;
+      destination = answer.trim();
+      if (/[a-zA-Z]/.test(destination)) break;
+      alert("Please enter a valid destination.");
+    }
+
+    let days;
+    while (true) {
+      const answer = prompt("How many car rental days?");
+      if (answer === null) return null;
+      days = Number(answer);
+      if (answer.trim() !== "" && Number.isInteger(days) && days > 0) break;
+      alert("Please enter a positive whole number of car rental days.");
+    }
+
+    return showVacation(hotelCostBonus(nights), planeRideCostBonus(destination), rentalCarCostBonus(days));
+  }
+  document.getElementById("runVacation").addEventListener("click", totalVacationCost);
+  document.getElementById("runVacationBonus").addEventListener("click", totalVacationCostBonus);
+
+  // =============================================================
+  // EXERCISE 5 — DOM selectors, content, remove, classes and style
+  // =============================================================
+  function resetUsers() {
+    const demo = document.getElementById("usersDemo");
+    const lists = demo.querySelectorAll("ul.list");
+    lists[0].replaceChildren();
+    lists[1].replaceChildren();
+    for (const name of ["John", "Pete"]) {
+      const li = document.createElement("li"); li.textContent = name; lists[0].appendChild(li);
+    }
+    for (const name of ["David", "Sarah", "Dan"]) {
+      const li = document.createElement("li"); li.textContent = name; lists[1].appendChild(li);
+    }
+    for (const list of lists) list.className = "list";
+    const container = demo.querySelector("#container");
+    container.removeAttribute("style");
+    document.body.style.fontSize = "";
+    document.getElementById("usersOutput").textContent = "Original users restored.";
+  }
+  function applyUsers() {
+    resetUsers();
+    const demo = document.getElementById("usersDemo");
+    const container = demo.querySelector("#container");
+    console.log(container);
+    const lists = demo.querySelectorAll("ul.list");
+    const myName = document.getElementById("myName").value.trim() || "Student";
+
+    // Rename Pete to Richard.
+    lists[0].children[1].textContent = "Richard";
+    // Remove Sarah: the 2nd li in the 2nd ul.
+    lists[1].children[1].remove();
+    // First li in each list becomes your name; add student_list.
+    for (const list of lists) {
+      list.firstElementChild.textContent = myName;
+      list.classList.add("student_list");
+    }
+    lists[0].classList.add("university", "attendance");
+    container.style.backgroundColor = "lightblue";
+    container.style.padding = "12px";
+    for (const li of demo.querySelectorAll("li")) {
+      if (li.textContent.trim() === "Dan") li.style.display = "none";
+      if (li.textContent.trim() === "Richard") li.style.border = "1px solid black";
+    }
+    document.body.style.fontSize = "17px";
+    document.getElementById("usersOutput").textContent = `Pete → Richard\nSarah → deleted\nJohn and David → ${myName}\nDan → hidden\nAdded student_list, university, attendance classes\nStyled background, border, padding and body font size`;
+    // Bonus greeting uses the two names in the first list.
+    if (container.style.backgroundColor === "lightblue") {
+      alert(`Hello ${lists[0].children[0].textContent} and ${lists[0].children[1].textContent}`);
+    }
+  }
+  document.getElementById("applyUsers").addEventListener("click", applyUsers);
+  document.getElementById("resetUsers").addEventListener("click", resetUsers);
+
+  // =============================================================
+  // EXERCISE 6 — setAttribute, createElement, createTextNode, appendChild
+  // =============================================================
+  function updateNavbar() {
+    const nav = document.getElementById("navBar") || document.getElementById("socialNetworkNavigation");
+    nav.setAttribute("id", "socialNetworkNavigation");
+    const ul = nav.querySelector("ul");
+    if (!Array.from(ul.children).some(li => li.textContent.trim() === "Logout")) {
+      const newItem = document.createElement("li");
+      const textNode = document.createTextNode("Logout");
+      newItem.appendChild(textNode);
+      ul.appendChild(newItem);
+    }
+    const firstItem = ul.firstElementChild;
+    const lastItem = ul.lastElementChild;
+    console.log("First link:", firstItem.textContent);
+    console.log("Last item:", lastItem.textContent);
+    document.getElementById("navbarOutput").textContent = `New ID: ${nav.id}\nFirst link: ${firstItem.textContent}\nLast item: ${lastItem.textContent}`;
+  }
+  function resetNavbar() {
+    const nav = document.getElementById("socialNetworkNavigation") || document.getElementById("navBar");
+    nav.setAttribute("id", "navBar");
+    for (const li of nav.querySelectorAll("li")) {
+      if (li.textContent.trim() === "Logout") li.remove();
+    }
+    document.getElementById("navbarOutput").textContent = "Navbar restored (ID: navBar).";
+  }
+  document.getElementById("applyNavbar").addEventListener("click", updateNavbar);
+  document.getElementById("resetNavbar").addEventListener("click", resetNavbar);
+
+  // =============================================================
+  // EXERCISE 7 — Books, array of objects, DOM render and red text
+  // =============================================================
+  const allBooks = [
+    { title: "Pride and Prejudice", author: "Jane Austen", image: "https://covers.openlibrary.org/b/isbn/9780141439518-M.jpg", alreadyRead: true },
+    { title: "1984", author: "George Orwell", image: "https://covers.openlibrary.org/b/isbn/9780451524935-M.jpg", alreadyRead: false }
+  ];
+  function showBooks() {
+    const section = document.querySelector(".listBooks");
+    section.replaceChildren();
+    for (const book of allBooks) {
+      const div = document.createElement("div");
+      div.className = "book";
+      const details = document.createElement("p");
+      details.textContent = `${book.title} written by ${book.author}`;
+      if (book.alreadyRead) details.style.color = "red";
+      const image = document.createElement("img");
+      image.src = book.image;
+      image.alt = `Cover of ${book.title}`;
+      image.width = 100;
+      image.loading = "lazy";
+      const status = document.createElement("small");
+      status.textContent = book.alreadyRead ? "Already read" : "Not read yet";
+      div.appendChild(details);
+      div.appendChild(image);
+      div.appendChild(status);
+      section.appendChild(div);
+    }
+  }
+  document.getElementById("renderBooks").addEventListener("click", showBooks);
+  showBooks();
+</script>
+</body>
+</html>
