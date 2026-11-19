@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f5f0">
+  <title>My To-Do List | JavaScript DOM Project</title>
+  <!-- Font Awesome provides the X icon. A plain × appears if offline. -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        onload="document.documentElement.classList.add('font-awesome-loaded')">
+  <style>
+/* Minimal, responsive to-do list styling */
+:root {
+  --canvas: #f7f5f0;
+  --ink: #262923;
+  --muted: #81867e;
+  --line: #e8e9e2;
+  --accent: #38564b;
+  --accent-dark: #254035;
+  --danger: #c95149;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+
+.app {
+  width: min(100% - 32px, 650px);
+  margin: 0 auto;
+  padding: clamp(70px, 12vh, 120px) 0 60px;
+}
+
+.header { margin-bottom: 35px; }
+.eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .18em;
+  color: var(--accent);
+  margin: 0 0 16px;
+}
+h1 {
+  font-size: clamp(39px, 6.5vw, 58px);
+  font-weight: 650;
+  line-height: 1.06;
+  letter-spacing: -.065em;
+  margin: 0 0 13px;
+}
+.period { color: #b38b5e; }
+.intro { color: #72776f; font-size: 15px; margin: 0; line-height: 1.5; }
+
+.todo-card {
+  background: #fff;
+  border: 1px solid #eceee7;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(35, 46, 33, 0.045);
+  padding: 30px;
+}
+.field-label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: .12em;
+  font-weight: 800;
+  color: #77837a;
+  margin-bottom: 12px;
+}
+.form-row { display: flex; gap: 10px; }
+#taskInput {
+  min-width: 0;
+  width: 100%;
+  height: 49px;
+  padding: 0 16px;
+  border-radius: 9px;
+  border: 1px solid #dfe3dc;
+  background: #fbfcf9;
+  color: var(--ink);
+  outline: none;
+  font: inherit;
+  font-size: 14px;
+  transition: border-color .2s, box-shadow .2s;
+}
+#taskInput::placeholder { color: #a1a89e; }
+#taskInput:focus {
+  border-color: #628b75;
+  box-shadow: 0 0 0 3px rgba(65, 111, 82, .12);
+}
+#taskInput[aria-invalid="true"] { border-color: var(--danger); }
+#submitButton {
+  border: 0;
+  border-radius: 9px;
+  padding: 0 19px;
+  background: var(--accent);
+  color: white;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+}
+#submitButton:hover { background: var(--accent-dark); transform: translateY(-1px); }
+#submitButton:focus-visible,
+.delete-button:focus-visible,
+.task-checkbox:focus-visible { outline: 3px solid #c1d7be; outline-offset: 3px; }
+#submitButton span { font-size: 22px; font-weight: 350; line-height: 1; }
+.form-message {
+  min-height: 21px;
+  font-size: 12px;
+  color: var(--danger);
+  margin: 7px 0 0;
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 0 13px;
+  border-bottom: 1px solid var(--line);
+}
+.list-header h2 { font-size: 15px; margin: 0; letter-spacing: -.015em; font-weight: 700; }
+#taskCount { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.listTasks { min-height: 105px; }
+.listTasks:empty::after {
+  content: "Your list is empty. Start with one small task.";
+  display: block;
+  padding: 37px 0 14px;
+  text-align: center;
+  color: #a5aaa4;
+  font-size: 13px;
+  font-style: italic;
+}
+.task-row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-height: 55px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  animation: arrive .18s ease-out both;
+}
+.task-row:last-child { border-bottom: 0; }
+@keyframes arrive { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+.delete-button {
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #fff1f0;
+  border-radius: 6px;
+  color: #d15b56;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background .18s ease;
+}
+.delete-button:hover { background: #fbdedb; }
+.delete-button .fallback-x { display: inline; font-size: 20px; line-height: 1; }
+.delete-button .fa-xmark { display: none; }
+.font-awesome-loaded .delete-button .fallback-x { display: none; }
+.font-awesome-loaded .delete-button .fa-xmark { display: inline-block; }
+.task-checkbox {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  flex: 0 0 18px;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.task-text {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: color .2s;
+}
+.task-row.completed .task-text { color: var(--danger); text-decoration: line-through; text-decoration-thickness: 1.5px; }
+.footnote { text-align: center; font-size: 12px; color: #989e94; margin: 23px 0 0; }
+
+@media (max-width: 480px) {
+  .app { padding-top: 48px; }
+  .todo-card { padding: 21px 17px; }
+  .header { margin-bottom: 28px; }
+  #submitButton { padding: 0 12px; gap: 8px; }
+  .form-row { gap: 7px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+  </style>
+
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <p class="eyebrow">DEVELOPERS INSTITUTE · MINI PROJECT</p>
+      <h1>My to-do list<span class="period">.</span></h1>
+      <p class="intro">A little space for what matters today.</p>
+    </header>
+
+    <section class="todo-card" aria-label="Task manager">
+      <form id="taskForm" autocomplete="off">
+        <label for="taskInput" class="field-label">ADD A TASK</label>
+        <div class="form-row">
+          <input type="text" id="taskInput" name="task" placeholder="What needs to be done?" maxlength="120" aria-describedby="formMessage">
+          <button type="submit" id="submitButton">Submit <span aria-hidden="true">+</span></button>
+        </div>
+        <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="list-header">
+        <h2>Today's tasks</h2>
+        <span id="taskCount" aria-live="polite">0 of 0 complete</span>
+      </div>
+
+      <!-- Must start empty: JavaScript will insert all task rows here. -->
+      <div class="listTasks" id="listTasks"></div>
+    </section>
+
+    <p class="footnote">Add a task · check it when done · use × to delete it</p>
+  </main>
+  <script>
+// JavaScript Mini Project — To-Do List
+// Concepts: arrays, objects, DOM creation, DOM events, conditionals.
+
+// BONUS I: Each task is an object with an ID, text, and done status.
+const tasks = [];
+let nextTaskId = 0;
+
+const form = document.getElementById("taskForm");
+const input = document.getElementById("taskInput");
+const listTasks = document.querySelector(".listTasks");
+const formMessage = document.getElementById("formMessage");
+const taskCount = document.getElementById("taskCount");
+
+function updateCount() {
+  const completed = tasks.filter(task => task.done).length;
+  taskCount.textContent = `${completed} of ${tasks.length} complete`;
+}
+
+// Creates the HTML elements for one new task.
+function createTaskElement(task) {
+  const row = document.createElement("div");
+  row.className = "task-row";
+  row.dataset.taskId = task.task_id; // Adds data-task-id="0", "1", etc.
+
+  // X button — Font Awesome icon, with a fallback if the internet is off.
+  const deleteButton = document.createElement("button");
+  deleteButton.type = "button";
+  deleteButton.className = "delete-button";
+  deleteButton.setAttribute("aria-label", `Delete ${task.text}`);
+  deleteButton.innerHTML = '<i class="fa-solid fa-xmark" aria-hidden="true"></i><span class="fallback-x" aria-hidden="true">×</span>';
+
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.className = "task-checkbox";
+  checkbox.id = `task-${task.task_id}`;
+  checkbox.checked = task.done;
+
+  const label = document.createElement("label");
+  label.className = "task-text";
+  label.htmlFor = checkbox.id;
+  label.textContent = task.text; // textContent safely inserts user-written text.
+
+  row.appendChild(deleteButton);
+  row.appendChild(checkbox);
+  row.appendChild(label);
+  return row;
+}
+
+// Exercise: Add a new task to the array AND the DOM.
+function addTask(event) {
+  if (event) event.preventDefault(); // Stop the form from reloading the page.
+  const text = input.value.trim();
+
+  if (text === "") {
+    formMessage.textContent = "Please enter a task first.";
+    input.setAttribute("aria-invalid", "true");
+    input.focus();
+    return;
+  }
+
+  const newTask = {
+    task_id: nextTaskId,
+    text: text,
+    done: false
+  };
+
+  nextTaskId++; // Each task gets a new ID; deleted IDs are not reused.
+  tasks.push(newTask);
+  listTasks.appendChild(createTaskElement(newTask));
+
+  input.value = "";
+  input.removeAttribute("aria-invalid");
+  formMessage.textContent = "";
+  updateCount();
+  input.focus();
+}
+
+// BONUS I: Update the object's done status and the red strikethrough.
+function doneTask(taskId, checked) {
+  const task = tasks.find(task => task.task_id === taskId);
+  if (!task) return;
+
+  task.done = checked;
+  const row = listTasks.querySelector(`[data-task-id="${taskId}"]`);
+  if (row) row.classList.toggle("completed", task.done);
+  updateCount();
+}
+
+// BONUS II: Remove the task from the tasks array and from the DOM.
+function deleteTask(taskId) {
+  const index = tasks.findIndex(task => task.task_id === taskId);
+  if (index === -1) return;
+
+  tasks.splice(index, 1); // Remove one task from the array.
+  const row = listTasks.querySelector(`[data-task-id="${taskId}"]`);
+  if (row) row.remove();  // Remove that task's row from the page.
+  updateCount();
+}
+
+// DOM event: the form's Submit button and Enter key both call addTask().
+form.addEventListener("submit", addTask);
+input.addEventListener("input", () => {
+  formMessage.textContent = "";
+  input.removeAttribute("aria-invalid");
+});
+
+// Event delegation: one listener handles checkboxes inside the list.
+listTasks.addEventListener("change", function (event) {
+  if (!event.target.matches(".task-checkbox")) return;
+  const row = event.target.closest("[data-task-id]");
+  doneTask(Number(row.dataset.taskId), event.target.checked);
+});
+
+// Event delegation: clicking the X icon or button deletes its row.
+listTasks.addEventListener("click", function (event) {
+  const button = event.target.closest(".delete-button");
+  if (!button || !listTasks.contains(button)) return;
+  const row = button.closest("[data-task-id]");
+  deleteTask(Number(row.dataset.taskId));
+});
+
+updateCount();
+
+  </script>
+</body>
+</html>
