@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameInfo — Advanced Array Methods | JavaScript Challenge</title>
+  <style>
+    :root { color-scheme: light; --ink: #17243a; --muted: #53627a; --surface: #ffffff; --line: #dce4ee; --navy: #172d4a; }
+    * { box-sizing: border-box; }
+    body { background: #f5f7fb; color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 0; padding: 32px 18px; }
+    main { max-width: 940px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; font-size: clamp(25px, 4vw, 38px); }
+    h2 { font-size: 20px; margin: 0 0 14px; }
+    p { line-height: 1.65; }
+    .subtitle { color: var(--muted); margin: 0 0 24px; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; margin: 18px 0; }
+    .buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+    button { padding: 11px 15px; border-radius: 8px; border: 1px solid var(--navy); background: var(--navy); color: white; font-weight: 650; cursor: pointer; }
+    button.secondary { background: white; color: var(--navy); }
+    button:hover { opacity: 0.87; }
+    button:focus-visible { outline: 3px solid #8fc9f4; outline-offset: 2px; }
+    .results { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 12px; }
+    .result { background: #f7f9fc; padding: 16px; border: 1px solid var(--line); border-radius: 10px; }
+    .result span { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+    .result strong { font-size: 16px; overflow-wrap: anywhere; }
+    pre { overflow-x: auto; white-space: pre; background: #101927; color: #e9eef7; padding: 19px; border-radius: 10px; font-size: 13px; line-height: 1.55; tab-size: 4; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .hint { color: var(--muted); font-size: 14px; }
+    #feedback { color: #185f3a; font-weight: 600; min-height: 1.4em; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Daily Challenge: Advanced Array Methods</h1>
+  <p class="subtitle">One self-contained HTML file. View the solution, test the results, or download the JavaScript separately.</p>
+
+  <section class="panel">
+    <h2>Expected results</h2>
+    <div class="results">
+      <div class="result"><span>1. Usernames with exclamation marks</span><strong id="usernames-result">Calculating…</strong></div>
+      <div class="result"><span>2. Players scoring above 5</span><strong id="winners-result">Calculating…</strong></div>
+      <div class="result"><span>3. Total score</span><strong id="score-result">Calculating…</strong></div>
+    </div>
+    <p class="hint">You can also open Chrome DevTools (View → Developer → JavaScript Console) to see the <code>console.log()</code> outputs.</p>
+  </section>
+
+  <section class="panel">
+    <h2>JavaScript solution with coding explanations</h2>
+    <div class="buttons">
+      <button id="download" type="button">Download JavaScript (.js)</button>
+      <button class="secondary" id="copy" type="button">Copy JavaScript</button>
+    </div>
+    <p id="feedback" role="status" aria-live="polite"></p>
+    <pre><code id="code-preview"></code></pre>
+  </section>
+
+  <section class="panel">
+    <h2>Why this strategy?</h2>
+    <p><strong><code>forEach()</code></strong> visits every object in the array. We use <code>push()</code> to build the two new arrays required by the assignment. <strong><code>reduce()</code></strong> is well-suited to adding up scores because it carries a running total from one player to the next.</p>
+    <p>The JavaScript code is embedded directly in this HTML file, so it works offline and does not require Node.js or another file.</p>
+  </section>
+</main>
+
+<!-- The real solution below is BOTH executed in the browser AND displayed above. -->
+<script id="challenge-solution">
+// DAILY CHALLENGE: ADVANCED ARRAY METHODS
+// Strategy: use forEach() to build the two arrays, then reduce() to total the scores.
+// Every player is represented by an object inside the gameInfo array.
+
+const gameInfo = [
+    { username: "john", team: "red", score: 5, items: ["ball", "book", "pen"] },
+    { username: "becky", team: "blue", score: 10, items: ["tape", "backpack", "pen"] },
+    { username: "susy", team: "red", score: 55, items: ["ball", "eraser", "pen"] },
+    { username: "tyson", team: "green", score: 1, items: ["book", "pen"] }
+];
+
+// EXERCISE 1: Create an array of usernames followed by an exclamation mark.
+// We start with an empty array because forEach() does not return a new array.
+const usernames = [];
+
+gameInfo.forEach((player) => {
+    // Template strings let us add ! without modifying the original username.
+    usernames.push(`${player.username}!`);
+});
+
+console.log("1. Usernames:", usernames);
+// Expected: ["john!", "becky!", "susy!", "tyson!"]
+
+// EXERCISE 2: Keep only usernames belonging to players with a score above 5.
+// Important: > 5 does NOT include the number 5, so john is not a winner.
+const winners = [];
+
+gameInfo.forEach((player) => {
+    if (player.score > 5) {
+        winners.push(player.username);
+    }
+});
+
+console.log("2. Winners:", winners);
+// Expected: ["becky", "susy"]
+
+// EXERCISE 3: Add all players' scores.
+// reduce() carries a running total (starting at 0) across the array.
+const totalScore = gameInfo.reduce((sum, player) => {
+    return sum + player.score;
+}, 0);
+
+console.log("3. Total score:", totalScore);
+// Expected: 71 (5 + 10 + 55 + 1)
+
+// EXTRA: Show the results on the webpage as well as in the console.
+// textContent is safe for displaying text and does not interpret it as HTML.
+document.getElementById("usernames-result").textContent = JSON.stringify(usernames);
+document.getElementById("winners-result").textContent = JSON.stringify(winners);
+document.getElementById("score-result").textContent = totalScore;
+</script>
+
+<script>
+// Read the exact JavaScript that ran above. This keeps downloads in sync.
+const source = document.getElementById("challenge-solution").textContent.trim() + "\n";
+document.getElementById("code-preview").textContent = source;
+
+document.getElementById("download").addEventListener("click", () => {
+    const blob = new Blob([source], { type: "text/javascript;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "GameInfo_Advanced_Array_Methods.js";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    document.getElementById("feedback").textContent = "JavaScript file download started.";
+});
+
+document.getElementById("copy").addEventListener("click", async () => {
+    try {
+        await navigator.clipboard.writeText(source);
+        document.getElementById("feedback").textContent = "JavaScript copied.";
+    } catch {
+        // Clipboard APIs can be unavailable on locally opened file:// pages.
+        const area = document.createElement("textarea");
+        area.value = source;
+        document.body.appendChild(area);
+        area.select();
+        const copied = document.execCommand("copy");
+        area.remove();
+        document.getElementById("feedback").textContent = copied ? "JavaScript copied." : "Select the code above to copy it manually.";
+    }
+});
+</script>
+</body>
+</html>
