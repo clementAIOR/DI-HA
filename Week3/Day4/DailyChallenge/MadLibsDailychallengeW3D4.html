@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Challenge: Mad Libs</title>
+  <style>
+    body { font: 16px/1.55 system-ui, sans-serif; background: #f4f5fa; color: #26324d; margin: 0; padding: 40px 18px; }
+    main { max-width: 680px; margin: auto; padding: 26px; border: 1px solid #dbe1ed; border-radius: 14px; background: white; }
+    h1 { margin-top: 0; }
+    .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+    input { width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #c8cede; border-radius: 7px; font: inherit; }
+    .actions { margin: 22px 0; display: flex; gap: 10px; flex-wrap: wrap; }
+    button { padding: 11px 18px; border: 0; background: #343e7d; border-radius: 8px; color: white; cursor: pointer; font: inherit; }
+    button.secondary { background: #e7ebf8; color: #343e7d; }
+    button:disabled { opacity: .5; cursor: not-allowed; }
+    .story-box { background: #f5f6fb; border-radius: 8px; padding: 14px 18px; }
+    #story { min-height: 28px; line-height: 1.7; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Mad Libs</h1>
+    <p>Enter five words and make a story. Click Shuffle to see a different one using the same words.</p>
+    <form id="libform" novalidate>
+      <div class="fields">
+        <div><label for="noun">Noun:</label><input type="text" id="noun" /></div>
+        <div><label for="adjective">Adjective:</label><input type="text" id="adjective" /></div>
+        <div><label for="person">Someone's Name:</label><input type="text" id="person" /></div>
+        <div><label for="verb">Verb:</label><input type="text" id="verb" /></div>
+        <div><label for="place">A place:</label><input type="text" id="place" /></div>
+      </div>
+      <div class="actions">
+        <button id="lib-button" type="submit">Lib it!</button>
+        <button id="shuffle-button" class="secondary" type="button" disabled>Shuffle story</button>
+      </div>
+    </form>
+    <div class="story-box"><strong>Generated story:</strong><p id="story" aria-live="polite">Your story will appear here.</p></div>
+  </main>
+  <script>
+    "use strict";
+
+  // =============================================================
+  // EXERCISE 8 — Mad Libs: forms, DOM events and shuffle bonus
+  // =============================================================
+  const libForm = document.getElementById("libform");
+  const storyElement = document.getElementById("story");
+  const shuffleButton = document.getElementById("shuffle-button");
+
+  // Each function generates a different story from the same five words.
+  const storyTemplates = [
+    ({ noun, adjective, person, verb, place }) =>
+      `${person} woke up in ${place} and discovered that their ${noun} had become ${adjective}. To celebrate, they decided to ${verb} until sunrise.`,
+    ({ noun, adjective, person, verb, place }) =>
+      `At ${place}, ${person} entered a contest to ${verb} while balancing a ${noun} on their head. The judges called it ${adjective}.`,
+    ({ noun, adjective, person, verb, place }) =>
+      `The mayor of ${place} called ${person}: "Our ${noun} is acting ${adjective}! Only you can ${verb} to save us."`,
+    ({ noun, adjective, person, verb, place }) =>
+      `Once upon a time in ${place}, ${person} found the world's most ${adjective} ${noun}. It began to ${verb}, and everyone applauded.`,
+    ({ noun, adjective, person, verb, place }) =>
+      `Breaking news from ${place}: ${person} promised to ${verb} with a ${adjective} ${noun}. Nobody knew whether to laugh or run.`,
+    ({ noun, adjective, person, verb, place }) =>
+      `During a ${adjective} festival in ${place}, ${person} decided to ${verb} with their favorite ${noun}. It became a local tradition.`
+  ];
+
+  let savedWords = null;
+  let remainingStories = [];
+  let lastStoryIndex = -1;
+
+  function displayNewStory() {
+    if (!savedWords) return;
+
+    // Shuffle the order without repeating a story until all are shown.
+    if (remainingStories.length === 0) {
+      remainingStories = storyTemplates.map((_, index) => index);
+      // Even when restarting the cycle, the next story must be different.
+      if (lastStoryIndex !== -1) {
+        remainingStories = remainingStories.filter(index => index !== lastStoryIndex);
+      }
+    }
+    const randomPosition = Math.floor(Math.random() * remainingStories.length);
+    const [selectedIndex] = remainingStories.splice(randomPosition, 1);
+    lastStoryIndex = selectedIndex;
+
+    const story = storyTemplates[selectedIndex](savedWords);
+    storyElement.textContent = story;
+    console.log("Mad Libs story:", story);
+  }
+
+  libForm.addEventListener("submit", function (event) {
+    event.preventDefault(); // Do not reload the page when the form is submitted.
+
+    const ids = ["noun", "adjective", "person", "verb", "place"];
+    const words = {};
+    for (const id of ids) {
+      words[id] = document.getElementById(id).value.trim();
+    }
+
+    const missingInput = ids.find(id => words[id] === "");
+    if (missingInput) {
+      storyElement.textContent = "Please complete every field before creating your story.";
+      document.getElementById(missingInput).focus();
+      savedWords = null;
+      shuffleButton.disabled = true;
+      return;
+    }
+
+    savedWords = words; // Keep the same words for all shuffled stories.
+    remainingStories = [];
+    lastStoryIndex = -1;
+    shuffleButton.disabled = false;
+    displayNewStory();
+  });
+
+  shuffleButton.addEventListener("click", displayNewStory);
+  </script>
+</body>
+</html>

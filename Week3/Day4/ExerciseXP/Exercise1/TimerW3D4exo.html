@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 1 - Timer</title>
+    <style>
+        /* This is the CSS supplied by the exercise.
+           It automatically styles every <p> we add with JavaScript. */
+        p {
+            background: yellow;
+            color: red;
+        }
+    </style>
+
+    <!-- WHY defer?
+         The browser loads script.js but waits until the HTML has been parsed
+         before executing it. This means getElementById() can find our elements. -->
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <!-- The paragraphs will be created INSIDE this initially empty div. -->
+    <div id="container"></div>
+
+    <!-- Clicking this button stops Part III's repeating timer. -->
+    <button id="clear">Clear Interval</button>
+</body>
+</html>

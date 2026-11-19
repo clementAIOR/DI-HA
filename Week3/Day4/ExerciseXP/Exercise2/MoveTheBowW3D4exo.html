@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise 2 - Move the Box</title>
+    <style>
+        #container {
+            width: 400px;
+            height: 400px;
+
+            /* 'relative' makes this the reference area for the red box.
+               The red box's left position is measured from this container. */
+            position: relative;
+            background: yellow;
+        }
+
+        #animate {
+            width: 50px;
+            height: 50px;
+
+            /* 'absolute' lets JavaScript move the red box using style.left.
+               Without positioning, changing left would not move it. */
+            position: absolute;
+            background-color: red;
+        }
+    </style>
+
+    <!-- 'defer' waits for the HTML to be parsed before running the JS. -->
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <!-- onclick calls our JavaScript function when the button is clicked. -->
+    <p><button onclick="myMove()">Click Me</button></p>
+
+    <!-- The red box starts at the left edge of the yellow container. -->
+    <div id="container">
+        <div id="animate"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ExercisesXPW3D4 — DOM, Events and Forms</title>
+
+    <style>
+        /*
+         * ONE FILE, FOUR EXERCISES
+         * ---------------------------------------------------------------
+         * Each exercise has its own section and its own CSS selectors.
+         * Prefixing selectors with an exercise ID prevents accidental
+         * changes to unrelated headings, paragraphs, and forms.
+         * No external CSS file, library, or Node.js is needed.
+         */
+        :root {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color: #253246;
+            background-color: #f4f6f8;
+            line-height: 1.6;
+        }
+
+        * { box-sizing: border-box; }
+
+        body { margin: 0; }
+
+        .page-header {
+            background: #172d45;
+            color: white;
+            padding: 32px max(22px, calc((100% - 980px) / 2));
+        }
+
+        .page-header h1 { margin: 0; font-size: clamp(1.5rem, 4vw, 2.15rem); }
+        .page-header p { margin: 6px 0 0; color: #d7e3f0; }
+
+        nav { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 20px; }
+        nav a {
+            border: 1px solid #8499ae;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        nav a:hover, nav a:focus-visible { background-color: #35526d; }
+
+        main { max-width: 1024px; margin: 0 auto; padding: 26px 20px 55px; }
+
+        .exercise {
+            background: white;
+            border: 1px solid #dae1e9;
+            border-radius: 12px;
+            padding: 26px;
+            margin-bottom: 26px;
+            box-shadow: 0 2px 8px rgb(12 31 49 / 4%);
+            scroll-margin-top: 18px;
+        }
+        .exercise > h2 { margin-top: 0; color: #172d45; }
+        .intro { color: #556477; margin-top: -5px; }
+
+        .strategy {
+            border-left: 3px solid #7794b1;
+            padding: 10px 15px;
+            margin: 16px 0 20px;
+            background: #f5f8fb;
+            color: #374a61;
+            font-size: 0.93rem;
+        }
+
+        button, input[type="submit"] {
+            background: #204d7c;
+            color: white;
+            border: 0;
+            border-radius: 6px;
+            padding: 9px 16px;
+            font: inherit;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        button:hover, input[type="submit"]:hover { background: #17395d; }
+        button:focus-visible, input:focus-visible { outline: 2px solid #3f8ed6; outline-offset: 2px; }
+
+        /* EXERCISE 1: We only animate paragraphs INSIDE the article.
+           A one-second opacity transition creates the fade effect. */
+        #chocolate-article p { transition: opacity 1s ease; }
+        #chocolate-article h2, #chocolate-article h3 { cursor: pointer; }
+        #chocolate-article h1 { margin: 0; }
+        #chocolate-article h2 { color: #253246; }
+        #chocolate-article h3 { color: #47586a; }
+
+        /* EXERCISE 2 AND 4: Layout styling, not part of the calculation.
+           The JavaScript uses IDs rather than relying on this styling. */
+        #exercise-2 label, #exercise-4 label { display: block; margin-top: 12px; font-weight: 600; }
+        #exercise-2 input[type="text"], #exercise-4 input[type="text"] {
+            display: block;
+            width: min(100%, 380px);
+            border: 1px solid #a7b5c3;
+            border-radius: 6px;
+            padding: 9px 10px;
+            font: inherit;
+        }
+        #exercise-4 input[readonly] { background: #eaf1f8; }
+        #exercise-2 .usersAnswer { padding-left: 22px; }
+
+        /* EXERCISE 3: The JS controls strong text color on mouse events. */
+        #sentence { padding: 12px; border: 1px dashed #b9c8d7; border-radius: 6px; }
+        #sentence strong { color: black; }
+
+        .hint { color: #6b7786; font-size: 0.87rem; margin-top: 13px; }
+        footer { text-align: center; color: #758394; padding: 0 20px 28px; font-size: 0.86rem; }
+    </style>
+</head>
+<body>
+    <header class="page-header">
+        <h1>ExercisesXPW3D4</h1>
+        <p>Week 3 · Day 4 — DOM Manipulation, Event Handlers and Forms</p>
+        <nav aria-label="Jump to an exercise">
+            <a href="#exercise-1">1. Change the article</a>
+            <a href="#exercise-2">2. Work with forms</a>
+            <a href="#exercise-3">3. Transform the sentence</a>
+            <a href="#exercise-4">4. Volume of a sphere</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- ===========================================================
+             EXERCISE 1 — CHANGE THE ARTICLE
+             Keep the exercise's <article> structure as supplied.
+             The last paragraph is initially present so JS can remove it.
+             =========================================================== -->
+        <section class="exercise" id="exercise-1">
+            <h2>Exercise 1 — Change the article</h2>
+            <p class="intro">Click the headings, hover over the title and second paragraph, and use the bold button.</p>
+            <div class="strategy">
+                <strong>Strategy:</strong> Select only elements inside this article. Remove the final
+                paragraph, attach event listeners, and use CSS transitions for the fade-out bonus.
+            </div>
+
+            <article id="chocolate-article">
+                <h1>Some Facts</h1>
+                <h2>The Chocolate</h2>
+                <h3>History of the chocolate</h3>
+                <p>Chocolate is made from tropical Theobroma cacao tree seeds.
+                   Its earliest use dates back to the Olmec civilization in Mesoamerica.</p>
+                <p>After the European discovery of the Americas, chocolate became
+                   very popular in the wider world, and its demand exploded.</p>
+                <p>Chocolate has since become a popular food product that millions enjoy every day,
+                   thanks to its unique, rich, and sweet taste.</p>
+                <p>But what effect does eating chocolate have on our health?</p>
+            </article>
+
+            <button id="make-bold" type="button">Make every paragraph bold</button>
+            <p class="hint">Bonus: The first title changes to a random size on hover; the second article paragraph fades out.</p>
+        </section>
+
+        <!-- ===========================================================
+             EXERCISE 2 — WORK WITH FORMS
+             The original IDs and names for inputs are preserved.
+             The form receives its own ID to avoid selecting the sphere
+             form by accident. A page must not contain duplicate IDs:
+             therefore this submit button has a unique ID.
+             =========================================================== -->
+        <section class="exercise" id="exercise-2">
+            <h2>Exercise 2 — Work with forms</h2>
+            <p class="intro">Enter a first and last name and submit. The page will generate two list items.</p>
+            <div class="strategy">
+                <strong>Strategy:</strong> Retrieve the form and inputs in several ways, prevent the
+                default submit navigation, validate both values, then create safe HTML nodes with
+                <code>createElement()</code> and <code>textContent</code>.
+            </div>
+
+            <form id="names-form">
+                <label for="fname">First name:</label>
+                <input type="text" id="fname" name="firstname">
+                <label for="lname">Last name:</label>
+                <input type="text" id="lname" name="lastname">
+                <input type="submit" value="Submit" id="name-submit">
+            </form>
+            <ul class="usersAnswer" aria-live="polite"></ul>
+        </section>
+
+        <!-- ===========================================================
+             EXERCISE 3 — TRANSFORM THE SENTENCE
+             This is the exact supplied sentence, wrapped in an ID so
+             selecting <strong> items cannot touch other sections.
+             =========================================================== -->
+        <section class="exercise" id="exercise-3">
+            <h2>Exercise 3 — Transform the sentence</h2>
+            <p class="intro">Move the mouse into the sentence to make all bold words blue; move out to restore black.</p>
+            <div class="strategy">
+                <strong>Strategy:</strong> Gather all <code>&lt;strong&gt;</code> elements once and
+                reuse that collection in two functions. Check <code>relatedTarget</code> on mouseout,
+                so moving over nested bold words does not accidentally reset the colors.
+            </div>
+            <p id="sentence"><strong>Hello</strong> I hope you are enjoying <strong>this</strong> class. At the
+                <strong>end</strong> you <strong>will</strong> be great Developers!
+                <strong>Enjoy</strong> the <strong>JavaScript </strong> lessons</p>
+        </section>
+
+        <!-- ===========================================================
+             EXERCISE 4 — VOLUME OF A SPHERE
+             Original MyForm, radius and volume IDs retained.
+             Unique submit ID avoids collision with Exercise 2.
+             =========================================================== -->
+        <section class="exercise" id="exercise-4">
+            <h2>Exercise 4 — Volume of a sphere</h2>
+            <p>Input radius value and get the volume of a sphere.</p>
+            <div class="strategy">
+                <strong>Strategy:</strong> Validate and convert the radius to a number, calculate
+                <code>(4 / 3) * Math.PI * radius ** 3</code>, then show the answer in the read-only
+                volume field. Radius <code>0</code> is valid; negative radii are not.
+            </div>
+            <form id="MyForm">
+                <label for="radius">Radius</label>
+                <input type="text" name="radius" id="radius" required>
+                <label for="volume">Volume</label>
+                <input type="text" name="volume" id="volume" readonly>
+                <input type="submit" value="Calculate" id="sphere-submit">
+            </form>
+        </section>
+    </main>
+    <footer>One standalone HTML file · Four exercises only · Open in a browser, not with Node.js</footer>
+
+    <script>
+        "use strict";
+
+        /*
+         * WHY IS JAVASCRIPT AT THE END OF THE BODY?
+         * ------------------------------------------------------------
+         * The browser reads HTML from top to bottom. By placing this
+         * <script> after the four exercises, all elements already exist
+         * when querySelector / getElementById try to find them.
+         *
+         * WHY WRAP SOME EXERCISES IN (() => { ... })() ?
+         * ------------------------------------------------------------
+         * All four old script.js files used names such as 'form'.
+         * If copied directly into one <script>, the second
+         * 'const form' would cause: Identifier 'form' has already
+         * been declared. An IIFE creates a separate scope for each
+         * exercise, so their variables cannot conflict.
+         *
+         * Exercise 3 is kept at top level because its assignment
+         * explicitly asks for a GLOBAL variable named allBoldItems.
+         */
+
+        // =============================================================
+        // EXERCISE 1 — CHANGE THE ARTICLE
+        // =============================================================
+        (() => {
+            // STEP 1: firstElementChild is a DOM PROPERTY. It returns the
+            // first element of <article>, which is <h1>. Unlike firstChild,
+            // it ignores whitespace text nodes caused by indentation.
+            const article = document.getElementById("chocolate-article");
+            const heading1 = article.firstElementChild;
+            console.log("Exercise 1 — h1 element:", heading1);
+
+            // STEP 2: The last element in the initial article is a <p>.
+            // .remove() deletes this element from the DOM.
+            article.lastElementChild.remove();
+
+            // STEP 3: Run a callback only when <h2> is clicked.
+            // Choosing addEventListener keeps behavior in JavaScript,
+            // instead of mixing it into HTML onclick attributes.
+            const heading2 = article.querySelector("h2");
+            heading2.addEventListener("click", function () {
+                heading2.style.backgroundColor = "red";
+                heading2.style.color = "white"; // Contrast on red.
+            });
+
+            // STEP 4: Clicking <h3> removes it from the visible layout.
+            // display:none is different from visibility:hidden, which
+            // would still reserve the element's original space.
+            const heading3 = article.querySelector("h3");
+            heading3.addEventListener("click", function () {
+                heading3.style.display = "none";
+            });
+
+            // STEP 5: Style every remaining article paragraph.
+            // querySelectorAll creates a NodeList; for...of visits
+            // each matching element exactly once.
+            const boldButton = document.getElementById("make-bold");
+            boldButton.addEventListener("click", function () {
+                const paragraphs = article.querySelectorAll("p");
+                for (const paragraph of paragraphs) {
+                    paragraph.style.fontWeight = "bold";
+                }
+            });
+
+            // BONUS 1: A random integer between 0 and 100, inclusive.
+            // Math.random() ranges from 0 up to (but not including) 1.
+            // Multiply by 101 and use Math.floor to get 0..100.
+            // CSS needs a length unit, so we append "px".
+            heading1.addEventListener("mouseenter", function () {
+                const randomSize = Math.floor(Math.random() * 101);
+                heading1.style.fontSize = randomSize + "px";
+                console.log("Exercise 1 — h1 font size:", randomSize + "px");
+            });
+
+            // BONUS 2: Index 1 represents the 2nd paragraph because
+            // NodeList indices start at 0. CSS contains a transition:
+            // changing opacity from 1 to 0 fades it over one second.
+            const secondParagraph = article.querySelectorAll("p")[1];
+            secondParagraph.addEventListener("mouseenter", function () {
+                secondParagraph.style.opacity = "0";
+            });
+            secondParagraph.addEventListener("mouseleave", function () {
+                secondParagraph.style.opacity = "1"; // Restore visibility.
+            });
+        })();
+
+        // =============================================================
+        // EXERCISE 2 — WORK WITH FORMS
+        // =============================================================
+        (() => {
+            // STEP 1: We use an ID rather than querySelector("form"):
+            // this page contains TWO forms, one for names and one for
+            // sphere volume. The ID always selects the correct one.
+            const form = document.getElementById("names-form");
+            console.log("Exercise 2 — form:", form);
+
+            // STEP 2: Select inputs by ID. IDs must be unique on a page.
+            const firstNameInput = document.getElementById("fname");
+            const lastNameInput = document.getElementById("lname");
+            console.log("Exercise 2 — inputs by ID:", firstNameInput, lastNameInput);
+
+            // STEP 3: Get the same inputs by their 'name' attributes.
+            // getElementsByName returns a collection; [0] gets its
+            // first match. These console logs demonstrate both methods.
+            const firstNameByName = document.getElementsByName("firstname")[0];
+            const lastNameByName = document.getElementsByName("lastname")[0];
+            console.log("Exercise 2 — inputs by name:", firstNameByName, lastNameByName);
+
+            // This <ul> belongs to Exercise 2 only.
+            const answersList = document.querySelector("#exercise-2 .usersAnswer");
+
+            // STEP 4: 'submit' works both with the button and Enter.
+            form.addEventListener("submit", function (event) {
+                // By default, forms navigate or reload. Prevent that so
+                // our newly created list remains visible on this page.
+                event.preventDefault();
+
+                // .value returns a STRING. .trim() removes surrounding
+                // spaces, so a string of spaces counts as empty input.
+                const firstName = firstNameInput.value.trim();
+                const lastName = lastNameInput.value.trim();
+
+                if (firstName === "" || lastName === "") {
+                    alert("Please enter both your first name and last name.");
+                    return; // Stop: do not create empty <li> elements.
+                }
+
+                // Clear the previous result, so each valid submission
+                // displays exactly TWO list items (not duplicates).
+                answersList.replaceChildren();
+
+                // Build actual DOM elements, not strings of HTML.
+                // textContent treats the user's entry as text, not HTML.
+                const firstNameItem = document.createElement("li");
+                firstNameItem.textContent = firstName;
+                const lastNameItem = document.createElement("li");
+                lastNameItem.textContent = lastName;
+
+                // appendChild inserts each <li> inside the <ul>.
+                answersList.appendChild(firstNameItem);
+                answersList.appendChild(lastNameItem);
+                console.log("Exercise 2 — submitted names:", firstName, lastName);
+            });
+        })();
+
+        // =============================================================
+        // EXERCISE 3 — TRANSFORM THE SENTENCE
+        // =============================================================
+        // REQUIRED GLOBAL variable: this is intentionally outside IIFE.
+        let allBoldItems;
+        const sentenceParagraph = document.getElementById("sentence");
+
+        // STEP 1: Collect ALL <strong> elements within the paragraph.
+        // querySelectorAll returns a NodeList, which we save globally.
+        function getBoldItems() {
+            allBoldItems = sentenceParagraph.querySelectorAll("strong");
+        }
+
+        // STEP 2: Reuse the NodeList rather than searching the DOM again.
+        function highlight() {
+            for (const item of allBoldItems) {
+                item.style.color = "blue";
+            }
+        }
+
+        // STEP 3: Return the bold text to black.
+        function returnItemsToDefault() {
+            for (const item of allBoldItems) {
+                item.style.color = "black";
+            }
+        }
+
+        // We must populate allBoldItems before the functions use it.
+        getBoldItems();
+        console.log("Exercise 3 — bold items found:", allBoldItems.length);
+
+        // STEP 4: Mouseover changes the colors to blue.
+        sentenceParagraph.addEventListener("mouseover", highlight);
+
+        // A 'mouseout' event also fires when moving between a parent
+        // paragraph and one of its nested <strong> children. The
+        // relatedTarget is where the pointer is going. Only reset when
+        // the pointer REALLY leaves the whole paragraph.
+        sentenceParagraph.addEventListener("mouseout", function (event) {
+            if (!sentenceParagraph.contains(event.relatedTarget)) {
+                returnItemsToDefault();
+            }
+        });
+
+        // =============================================================
+        // EXERCISE 4 — VOLUME OF A SPHERE
+        // =============================================================
+        (() => {
+            // STEP 1: Retrieve the specific form and its fields by ID.
+            const form = document.getElementById("MyForm");
+            const radiusInput = document.getElementById("radius");
+            const volumeInput = document.getElementById("volume");
+
+            // STEP 2: Handle submit in JavaScript, not by page reload.
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                // STEP 3: Every input .value is text, even when someone
+                // types "3". Number("3") converts it to the number 3.
+                const radiusText = radiusInput.value.trim();
+                const radius = Number(radiusText);
+
+                // STEP 4: Reject empty, nonnumeric, infinite or negative
+                // values. Check empty SEPARATELY because Number("") is 0.
+                // A sphere with radius 0 has volume 0, so we allow it.
+                if (radiusText === "" || !Number.isFinite(radius) || radius < 0) {
+                    alert("Please enter a valid radius (a number of 0 or more).");
+                    volumeInput.value = "";
+                    return;
+                }
+
+                // STEP 5: Sphere volume formula: V = (4/3) × π × r³.
+                // Math.PI is the built-in constant for π, and ** 3 is
+                // the exponentiation operator (r times r times r).
+                const volume = (4 / 3) * Math.PI * radius ** 3;
+
+                if (!Number.isFinite(volume)) {
+                    alert("This radius is too large to calculate.");
+                    volumeInput.value = "";
+                    return;
+                }
+
+                // STEP 6: toFixed(2) formats two decimal places and
+                // returns text, suitable for the read-only input field.
+                volumeInput.value = volume.toFixed(2);
+                console.log("Exercise 4 — radius:", radius, "volume:", volume);
+            });
+        })();
+    </script>
+</body>
+</html>
