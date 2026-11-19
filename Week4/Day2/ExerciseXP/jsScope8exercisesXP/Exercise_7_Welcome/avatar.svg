@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" role="img" aria-label="Illustrated person avatar">
+  <rect width="80" height="80" fill="#dcebf3"/>
+  <circle cx="40" cy="29" r="16" fill="#a97757"/>
+  <path d="M22 26C23 5 56 4 58 25Q45 12 22 26" fill="#283a4a"/>
+  <path d="M12 80Q13 52 40 52Q67 52 68 80" fill="#376b8a"/>
+  <path d="M26 40Q40 54 54 40Q50 58 40 59Q30 58 26 40" fill="#a97757"/>
+  <circle cx="35" cy="30" r="1.4" fill="#283a4a"/><circle cx="46" cy="30" r="1.4" fill="#283a4a"/>
+  <path d="M35 38Q40 41 45 38" stroke="#6b4038" stroke-width="1.7" fill="none" stroke-linecap="round"/>
+</svg>

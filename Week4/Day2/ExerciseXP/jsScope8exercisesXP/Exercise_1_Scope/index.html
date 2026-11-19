@@ -1,0 +1,45 @@
+    <!doctype html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Exercise 1 — Scope</title>
+      <style>
+    :root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    * { box-sizing: border-box; }
+    body { background: #f5f7fa; color: #202937; line-height: 1.55; margin: 0; }
+    main { max-width: 850px; margin: 42px auto; padding: 0 20px 60px; }
+    h1 { margin-bottom: 5px; font-size: 1.9rem; }
+    h2 { font-size: 1.15rem; margin-top: 0; }
+    .eyebrow { text-transform: uppercase; font-size: .8rem; letter-spacing: .11em; color: #53657a; font-weight: 700; }
+    .intro { color: #526174; margin-bottom: 24px; }
+    section, .panel { background: white; padding: 21px 24px; border: 1px solid #dbe2e9; border-radius: 12px; margin: 17px 0; }
+    button { cursor: pointer; border: 0; border-radius: 7px; background: #174f83; color: white; padding: 10px 15px; font: inherit; font-weight: 600; }
+    button:hover { background: #10395f; }
+    pre, output, .result { display: block; white-space: pre-wrap; word-break: break-word; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #edf2f6; color: #14283d; border-radius: 7px; padding: 13px 15px; margin-top: 13px; }
+    code { background: #eef2f6; padding: 2px 4px; border-radius: 3px; }
+    .note { font-size: .92rem; color: #47576a; }
+    a { color: #145d91; }
+    @media (max-width: 600px) { main { margin-top: 24px; } section, .panel { padding: 16px; } }
+
+</style>
+      <!-- defer makes the browser finish parsing HTML before script.js runs.
+           This is important because the JavaScript selects elements from the page. -->
+      <script src="script.js" defer></script>
+    </head>
+    <body>
+      <main>
+        <p class="eyebrow">JavaScript practice · Independent exercise</p>
+        <h1>Exercise 1 — Scope</h1>
+        <p class="intro">Predict each value of a. Click an example to compare your prediction with its output. The original examples are separated to prevent repeated declarations from clashing.</p>
+
+      <section><h2>#1 — Local variable and reassignment</h2><p class="note">Prediction: <code>3</code>. Changing the local declaration to <code>const</code> would cause an error.</p><button data-case="1">Run #1</button><pre id="output-1">Not run yet.</pre></section>
+      <section><h2>#2 — Updating a variable from another function</h2><p class="note">Prediction: first <code>0</code>, then <code>5</code>. Changing the shared variable to <code>const</code> would cause an error.</p><button data-case="2">Run #2</button><pre id="output-2">Not run yet.</pre></section>
+      <section><h2>#3 — A property of window</h2><p class="note">Prediction: <code>hello</code>. This is a browser-specific example.</p><button data-case="3">Run #3</button><pre id="output-3">Not run yet.</pre></section>
+      <section><h2>#4 — Shadowing a variable</h2><p class="note">Prediction: <code>test</code> inside the function. Outer <code>a</code> stays <code>1</code>.</p><button data-case="4">Run #4</button><pre id="output-4">Not run yet.</pre></section>
+      <section><h2>#5 — Block scope</h2><p class="note">Prediction: <code>5</code> inside the if block and <code>2</code> outside it.</p><button data-case="5">Run #5</button><pre id="output-5">Not run yet.</pre></section>
+
+        <p class="note">Open the browser console with <strong>Cmd + Option + J</strong> (Mac / Chrome) to see the <code>console.log()</code> output. Open <code>script.js</code> to read the strategy and detailed comments.</p>
+      </main>
+    </body>
+    </html>
