@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f5f0">
+  <title>My To-Do List | JavaScript DOM Project</title>
+  <!-- Font Awesome provides the X icon. A plain × appears if offline. -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+        onload="document.documentElement.classList.add('font-awesome-loaded')">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <p class="eyebrow">DEVELOPERS INSTITUTE · MINI PROJECT</p>
+      <h1>My to-do list<span class="period">.</span></h1>
+      <p class="intro">A little space for what matters today.</p>
+    </header>
+
+    <section class="todo-card" aria-label="Task manager">
+      <form id="taskForm" autocomplete="off">
+        <label for="taskInput" class="field-label">ADD A TASK</label>
+        <div class="form-row">
+          <input type="text" id="taskInput" name="task" placeholder="What needs to be done?" maxlength="120" aria-describedby="formMessage">
+          <button type="submit" id="submitButton">Submit <span aria-hidden="true">+</span></button>
+        </div>
+        <p id="formMessage" class="form-message" role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="list-header">
+        <h2>Today's tasks</h2>
+        <span id="taskCount" aria-live="polite">0 of 0 complete</span>
+      </div>
+
+      <!-- Must start empty: JavaScript will insert all task rows here. -->
+      <div class="listTasks" id="listTasks"></div>
+    </section>
+
+    <p class="footnote">Add a task · check it when done · use × to delete it</p>
+  </main>
+
+</body>
+</html>
